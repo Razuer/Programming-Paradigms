@@ -1,0 +1,33 @@
+let insert xs x =
+    let rec insertRec xs x =
+      match xs with
+      | Leaf -> Node (Leaf, x, Leaf)
+      | Node (left, value, right) ->
+        let comp = C.compare x value in
+        match comp with
+        | Less ->
+          if left = Leaf then Node (Node (Leaf, x, Leaf), value, right)
+          else Node (insertRec left x, value, right)
+        | Greater ->
+          if right = Leaf then Node (left, value, Node (Leaf, x, Leaf))
+          else Node (left, value, insertRec right x)
+        | Equal -> xs
+    in 
+    let rec fixHeap xs =
+      match xs with
+      | Leaf -> xs
+      | Node (left, value, right) ->
+        let newValue =
+          if C.compare value x = Greater then value
+          else x
+        in
+        let newLeft =
+          if C.compare value x = Greater then fixHeap left
+          else left
+        in
+        let newRight =
+          if C.compare value x = Greater then fixHeap right
+          else right
+        in
+        Node (newLeft, newValue, newRight)
+    in fixHeap (insertRec xs x)
